@@ -1,5 +1,7 @@
 package me.bintanq.visantaraTrade.managers;
 
+import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 import me.bintanq.visantaraTrade.VisantaraTrade;
 import me.bintanq.visantaraTrade.session.TradeSession;
 import org.bukkit.Bukkit;
@@ -114,26 +116,35 @@ public class GUIManager {
         ConfigurationSection section = guiConfig.getConfigurationSection("items." + key);
         if (section == null) return new ItemStack(Material.AIR);
 
-        String materialName = section.getString("material", "STONE").toUpperCase();
-        Material mat;
+        ItemStack baseItem;
 
-        try {
-            mat = Material.valueOf(materialName);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().severe(String.format("[VisantaraTrade] Config Error: Invalid Material '%s' in gui.yml at 'items.%s'. Falling back to STONE.", materialName, key));
-            mat = Material.STONE;
+        String nexoId = section.getString("nexo", "");
+        if (nexoId.isBlank()) {
+            String materialName = section.getString("material", "STONE").toUpperCase();
+            try {
+                baseItem = new ItemStack(Material.valueOf(materialName));
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().severe(String.format("[VisantaraTrade] Config Error: Invalid Material '%s' in gui.yml at 'items.%s'. Falling back to STONE.", materialName, key));
+                baseItem = new ItemStack(Material.STONE);
+            }
+        } else {
+            ItemBuilder builder = NexoItems.itemFromId(nexoId);
+            if (builder == null) {
+                plugin.getLogger().severe(String.format("[VisantaraTrade] Config Error: Invalid Nexo Item ID '%s' in gui.yml at 'items.%s'. Falling back to STONE.", nexoId, key));
+                baseItem = new ItemStack(Material.STONE);
+            }
+            else baseItem = builder.build();
         }
 
-        ItemStack item = new ItemStack(mat);
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = baseItem.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(colorize(section.getString("name", "")));
             List<String> lore = new ArrayList<>();
             section.getStringList("lore").forEach(l -> lore.add(colorize(l)));
             meta.setLore(lore);
-            item.setItemMeta(meta);
+            baseItem.setItemMeta(meta);
         }
-        return item;
+        return baseItem;
     }
 
     private ItemStack createMoneyItem(double amount) {

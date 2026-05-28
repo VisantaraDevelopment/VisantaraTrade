@@ -2,6 +2,7 @@ package me.bintanq.visantaraTrade;
 
 import me.bintanq.visantaraTrade.commands.PayCommand;
 import me.bintanq.visantaraTrade.commands.TradeCommand;
+import me.bintanq.visantaraTrade.listeners.JoinQuitListener;
 import me.bintanq.visantaraTrade.listeners.TradeListener;
 import me.bintanq.visantaraTrade.managers.*;
 import net.milkbowl.vault.economy.Economy;
@@ -20,6 +21,7 @@ public class VisantaraTrade extends JavaPlugin {
     private DatabaseManager databaseManager;
     private CooldownManager cooldownManager;
     private TradeListener tradeListener;
+    private JoinQuitListener joinQuitListener;
 
     @Override
     public void onEnable() {
@@ -38,6 +40,7 @@ public class VisantaraTrade extends JavaPlugin {
         cooldownManager = new CooldownManager(this);
         tradeManager = new TradeManager(this);
         this.tradeListener = new TradeListener(this);
+        this.joinQuitListener = new JoinQuitListener(this);
 
         TradeCommand tradeCommand = new TradeCommand(this);
         getCommand("visantaratrade").setExecutor(tradeCommand);
@@ -50,6 +53,7 @@ public class VisantaraTrade extends JavaPlugin {
         getCommand("pay").setTabCompleter(payCommand);
 
         getServer().getPluginManager().registerEvents(this.tradeListener, this);
+        getServer().getPluginManager().registerEvents(this.joinQuitListener, this);
 
         getLogger().info("VisantaraTrade has been enabled successfully!");
     }
@@ -77,11 +81,7 @@ public class VisantaraTrade extends JavaPlugin {
             return false;
         }
         economy = rsp.getProvider();
-        return economy != null;
-    }
-
-    public static VisantaraTrade getInstance() {
-        return instance;
+        return true;
     }
 
     public Economy getEconomy() {
