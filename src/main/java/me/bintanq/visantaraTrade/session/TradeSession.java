@@ -160,6 +160,7 @@ public class TradeSession {
         if (ready) {
             plugin.getMessageManager().sendSound(player, "READY");
         } else {
+            plugin.getMessageManager().sendSound(player, "UNREADY");
             if (countdownTask != null) {
                 countdownTask.cancel();
                 countdownTask = null;

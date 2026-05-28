@@ -23,7 +23,6 @@ public class ConfigManager {
     private void loadConfigs() {
         plugin.saveDefaultConfig();
         plugin.getConfig().options().copyDefaults(true);
-        plugin.saveConfig();
         config = plugin.getConfig();
 
         messages = loadAndSync("messages.yml");

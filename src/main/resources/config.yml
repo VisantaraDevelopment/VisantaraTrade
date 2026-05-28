@@ -70,6 +70,12 @@ sounds:
     volume: 1.0
     pitch: 2.0
 
+  UNREADY:
+    enabled: true
+    sound: BLOCK_NOTE_BLOCK_PLING
+    volume: 1.0
+    pitch: 2.0
+
   TRADE_SUCCESS:
     enabled: true
     sound: ENTITY_PLAYER_LEVELUP

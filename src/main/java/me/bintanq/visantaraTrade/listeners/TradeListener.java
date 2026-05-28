@@ -69,8 +69,10 @@ public class TradeListener implements Listener {
                 ItemStack itemInSlot = tradeGUI.getItem(slot);
                 if (itemInSlot != null && itemInSlot.getType() != Material.AIR) {
                     session.addItem(player, slot, itemInSlot);
+                    plugin.getMessageManager().sendSound(player, "ITEM_ADD");
                 } else {
                     session.removeItem(player, slot);
+                    plugin.getMessageManager().sendSound(player, "ITEM_REMOVE");
                 }
                 session.resetReady();
             });
