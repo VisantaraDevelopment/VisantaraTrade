@@ -28,7 +28,8 @@ public class GUIManager {
     public int player1RemoveMoneySlot;
     private int player2AddMoneySlot;
     public int player2RemoveMoneySlot;
-    private int tradeInfoSlot;
+    private int leftTradeInfoSlot;
+    private int rightTradeInfoSlot;
     private int guiSize;
 
     public GUIManager(VisantaraTrade plugin) {
@@ -53,7 +54,8 @@ public class GUIManager {
         player2AddMoneySlot = guiConfig.getInt("player2-add-money-slot");
         player2RemoveMoneySlot = guiConfig.getInt("player2-remove-money-slot");
 
-        tradeInfoSlot = guiConfig.getInt("trade-info-slot", 49);
+        leftTradeInfoSlot = guiConfig.getInt("left-trade-info-slot", 40);
+        rightTradeInfoSlot = guiConfig.getInt("right-trade-info-slot", 49);
     }
 
     public Inventory createTradeGUI(TradeSession session) {
@@ -77,29 +79,42 @@ public class GUIManager {
         inv.setItem(player2AddMoneySlot, createItem("add-money"));
         inv.setItem(player2RemoveMoneySlot, createItem("remove-money"));
 
-        inv.setItem(tradeInfoSlot, createItem("trade-info"));
+        inv.setItem(leftTradeInfoSlot, createItem("trade-info.left"));
+        inv.setItem(rightTradeInfoSlot, createItem("trade-info.right"));
 
         return inv;
     }
 
-    public void updateTradeInfo(Inventory inv, Player viewer, Player other) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
+    public void updateTradeInfo(Inventory inv, Player left, Player right) {
+        ItemStack leftHead = new ItemStack(Material.PLAYER_HEAD);
+        ItemStack rightHead = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta leftMeta = (SkullMeta) leftHead.getItemMeta();
+        SkullMeta rightMeta = (SkullMeta) rightHead.getItemMeta();
 
-        if (meta != null) {
-            meta.setOwningPlayer(other);
-
-            String name = guiConfig.getString("items.trade-info.name", "&6Trading with: &e{player}");
-            meta.setDisplayName(colorize(name.replace("{player}", other.getName())));
-
-            List<String> lore = new ArrayList<>();
-            for (String line : guiConfig.getStringList("items.trade-info.lore")) {
-                lore.add(colorize(line));
-            }
-            meta.setLore(lore);
-            head.setItemMeta(meta);
+        if (leftMeta != null) {
+            leftMeta.setOwningPlayer(left);
+            String leftName = guiConfig.getString("items.trade-info.left.name", "&6Sedang trade dengan: &e{player}");
+            formatHeadMeta(left, leftHead, leftMeta, leftName);
         }
-        inv.setItem(tradeInfoSlot, head);
+
+        if (rightMeta != null) {
+            rightMeta.setOwningPlayer(left);
+            String rightName = guiConfig.getString("items.trade-info.right.name", "&6Sedang trade dengan: &e{player}");
+            formatHeadMeta(right, rightHead, rightMeta, rightName);
+        }
+
+        inv.setItem(leftTradeInfoSlot, leftHead);
+        inv.setItem(rightTradeInfoSlot, rightHead);
+    }
+
+    private void formatHeadMeta(Player player, ItemStack headStack, SkullMeta headMeta, String itemName) {
+        headMeta.setDisplayName(colorize(itemName.replace("{player}", player.getName())));
+        List<String> lore = new ArrayList<>();
+        for (String line : guiConfig.getStringList("items.trade-info.lore")) {
+            lore.add(colorize(line));
+        }
+        headMeta.setLore(lore);
+        headStack.setItemMeta(headMeta);
     }
 
     public void updateReadyButtons(Inventory inv, boolean p1Ready, boolean p2Ready) {
@@ -175,7 +190,7 @@ public class GUIManager {
     }
     public boolean isAddMoneySlot(int s) { return s == player1AddMoneySlot || s == player2AddMoneySlot; }
     public boolean isPlayer1MoneyControl(int s) { return s == player1AddMoneySlot || s == player1RemoveMoneySlot; }
-    public boolean isTradeInfoSlot(int s) { return s == tradeInfoSlot; }
+    public boolean isTradeInfoSlot(int s) { return s == leftTradeInfoSlot || s == rightTradeInfoSlot; }
 
     private String colorize(String t) { return t == null ? "" : t.replace("&", "§"); }
 }

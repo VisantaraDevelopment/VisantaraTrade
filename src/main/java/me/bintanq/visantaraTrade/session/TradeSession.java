@@ -43,7 +43,6 @@ public class TradeSession {
         player1.openInventory(gui);
         player2.openInventory(gui);
         plugin.getGuiManager().updateTradeInfo(gui, player1, player2);
-        plugin.getGuiManager().updateTradeInfo(gui, player2, player1);
         plugin.getMessageManager().sendSound(player1, "TRADE_OPEN");
         plugin.getMessageManager().sendSound(player2, "TRADE_OPEN");
     }

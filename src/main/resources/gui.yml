@@ -58,7 +58,8 @@ gui:
   player1-add-money-slot: 47
   player1-remove-money-slot: 48
 
-  trade-info-slot: 49
+  left-trade-info-slot: 40
+  right-trade-info-slot: 49
 
   player2-remove-money-slot: 50
   player2-add-money-slot: 51
@@ -100,7 +101,13 @@ gui:
         - "&7Click to reset your"
         - "&7money offer to $0."
     trade-info:
-      material: PLAYER_HEAD
-      name: "&6&lTrading with: &e{player}"
-      lore:
-        - "&7Place items in your slots"
+      left:
+        material: PLAYER_HEAD
+        name: "&6&lTrading with: &e{player}"
+        lore:
+          - "&7Place items in your slots"
+      right:
+        material: PLAYER_HEAD
+        name: "&6&lTrading with: &e{player}"
+        lore:
+          - "&7Place items in your slots"
